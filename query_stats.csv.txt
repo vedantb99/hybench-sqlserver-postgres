@@ -1,0 +1,23 @@
+Query ID,Type,Index Used,Justification
+Q1,Standard k-NN,YES,Directly maps to VECTOR_SEARCH with TOP_N.
+Q2,Range Search,NO,Index API mandates TOP_N; cannot handle distance thresholds.
+Q3,Pre-filtered k-NN,NO,Index is Post-filter; Pre-filtering requires full scan for correctness.
+Q4,Hybrid Range,NO,Cannot handle simultaneous relational and vector distance range filters.
+Q5,Pre-filtered k-NN,NO,Relational Join must happen before ranking (Pre-filter logic).
+Q6,Hybrid Range,NO,Index cannot handle distance thresholds.
+Q7,Agg on Pre-filter,NO,Pre-filter logic requires full scan.
+Q9,Agg on Range,NO,Range search logic requires full scan.
+NQ11,Agg on k-NN,YES,Standard Top-N search supported by index.
+NQ12,Agg on Range,NO,Range search logic requires full scan.
+NQ13,Agg on k-NN,YES,Standard Top-N search supported by index.
+NQ14,Agg on Range,NO,Range search logic requires full scan.
+NQ15,Centroid Search,YES,Implemented via Hybrid Python-SQL approach.
+NQ16,Multi-Target k-NN,YES,Implemented via UNION of two VECTOR_SEARCH calls.
+NQ17,Minimax k-NN,NO,Sorting logic (GREATEST) requires full table calculation.
+NQ18,Exclusion k-NN,YES,Implemented via nested VECTOR_SEARCH calls.
+NQ19,Dissimilarity k-NN,NO,Exclusion logic relies on distance threshold (Range logic).
+IQ1,Paginated k-NN,YES,Implemented via TOP_N + OFFSET.
+IQ2,Bounded Range,NO,Index cannot handle "Between X and Y" distance.
+IQ3,Paginated Pre-filter,NO,Pre-filter logic requires full scan.
+IQ_Series (Rest),Complex Range/Filter,NO,Combines Range or Pre-filter logic incompatible with index.
+SQ_Series (All),Specific Rank/Range,NO,Index cannot targeting specific ranks or multi-ranges natively.
